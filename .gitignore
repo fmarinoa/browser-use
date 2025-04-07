@@ -1,9 +1,8 @@
 __pycache__/
 cookies
-reporte/result
-reporte/__pycache__/
-reporte/videos_result
 
 
 .env
-.webm
+*.webm
+*.html
+*.json
