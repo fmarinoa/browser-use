@@ -1,8 +1,8 @@
 __pycache__/
 cookies
-reporte/result/
+reporte/result
 reporte/__pycache__/
-reporte/videos_result/
+reporte/videos_result
 
 
 .env
