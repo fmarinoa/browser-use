@@ -42,7 +42,6 @@ context = BrowserContext(
 
 
 agent = Agent(
-#    task="INgresa a la pagina wattaca.com verifica cuales son sus formas de pago y en precio de delivery a san miguel, ademas analiza si cuneta con delivery gratis",
     task = """
 Actúa como un QA automatizado y realiza pruebas de regresión (sanity check) en la página **riobuenoshop.com**. Sigue este flujo:
 
