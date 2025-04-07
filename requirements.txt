@@ -1,0 +1,3 @@
+browser-use
+langchain_google_genai
+jinja2
