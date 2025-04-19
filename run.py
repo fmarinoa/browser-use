@@ -24,6 +24,8 @@ browser = Browser(
     config=BrowserConfig(
         headless=False,
         disable_security=False,
+#        chrome_instance_path="/usr/bin/google-chrome",
+#        chrome_instance_path="/usr/bin/brave-browser",  
     )
 )
 
