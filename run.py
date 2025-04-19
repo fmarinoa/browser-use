@@ -1,15 +1,16 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from browser_use import Agent, Browser, BrowserConfig
-from browser_use.browser.context import *
-from report.reporte import generate_reporte
-from pydantic import SecretStr
+import asyncio
 import os
 import sys
-import asyncio
+
+from browser_use import Agent, BrowserConfig, Browser
+from browser_use.browser.context import BrowserContext, BrowserContextConfig
 from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
+from pydantic import SecretStr
+
+from report.reporte import generate_reporte
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 load_dotenv()
 
@@ -17,7 +18,6 @@ api_key = os.getenv("GEMINI_API_KEY")
 
 # Initialize the model
 llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash', api_key=SecretStr(api_key))
-
 
 # Create agent with the model
 browser = Browser(
@@ -28,37 +28,40 @@ browser = Browser(
 #        chrome_instance_path="/usr/bin/brave-browser",  
     )
 )
+
 context = BrowserContext(
-    browser=browser, 
-    config = BrowserContextConfig(
+    browser=browser,
+    config=BrowserContextConfig(
         browser_window_size={'width': 1360, 'height': 700},
         highlight_elements=True,
         viewport_expansion=500,
         save_recording_path="./report/videos_result",
         no_viewport=False
-        
+
     )
 )
 
 
-agent = Agent(
-    task = """
+prompt = """
 Genera una tabla comparativa en formato JSON con los 5 mejores precios del iPhone 16 en Lima, Perú, 
 considerando las siguientes especificaciones:
 - Precios en soles peruanos (PEN)
 - Tienda
 - Especificar capacidad (128GB, 256GB, etc.) y color cuando esté disponible
 - Incluir precios con y sin descuentos (si aplica)
-""",
-    llm=llm,
-    use_vision=True,              # Enable vision capabilities
-    browser_context=context,
-    
-)
+"""
 
 
 async def main():
     try:
+
+        agent = Agent(
+            task=prompt,
+            llm=llm,
+            use_vision=True,  # Enable vision capabilities
+            browser_context=context,
+
+        )
         ruta = './report/result/report.json'
         history = await agent.run()
         history.save_to_file(ruta)
@@ -76,7 +79,9 @@ async def main():
         return 1  # Indica error
 
     finally:
+        await context.close()
         await browser.close()  # Ensure browser is properly closed
+
 
 if __name__ == '__main__':
     try:

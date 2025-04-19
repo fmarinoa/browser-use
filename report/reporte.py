@@ -1,7 +1,8 @@
 import json
 from datetime import datetime
+
 from jinja2 import Template
-import os
+
 
 def generate_reporte(ruta):
     # Leer el JSON
@@ -17,11 +18,11 @@ def generate_reporte(ruta):
         start_time = datetime.fromtimestamp(entry['metadata']['step_start_time']).strftime('%Y-%m-%d %H:%M:%S')
         end_time = datetime.fromtimestamp(entry['metadata']['step_end_time']).strftime('%Y-%m-%d %H:%M:%S')
         duration = round(entry['metadata']['step_end_time'] - entry['metadata']['step_start_time'], 2)
-        
+
         # Procesar la imagen base64
         screenshot = entry['state']['screenshot']
         img_tag = f'<img src="data:image/png;base64,{screenshot}" style="max-width: 600px; border: 1px solid #ddd; margin-top: 10px;">' if screenshot else 'No hay captura de pantalla'
-        
+
         formatted_entries.append({
             'step_number': entry['metadata']['step_number'],
             'start_time': start_time,
@@ -40,6 +41,7 @@ def generate_reporte(ruta):
     <html>
     <head>
         <title>Reporte de Navegación Automatizada</title>
+        <meta charset="UTF-8">
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
             h1 { color: #2c3e50; }
@@ -155,7 +157,6 @@ def generate_reporte(ruta):
             f.write(html_output)
             print("Reporte HTML generado exitosamente!")
             # Abrir el reporte automáticamente en el navegador
-#            os.system('start reporte_navegacion.html' if os.name == 'nt' else 'open reporte_navegacion.html')
+    #            os.system('start reporte_navegacion.html' if os.name == 'nt' else 'open reporte_navegacion.html')
     except Exception as e:
         print(f"Error al generar el Reporte HTML: {e}")
-
