@@ -1,0 +1,41 @@
+name: Run Browser-use
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, '[run-test]')"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5 
+      with:
+        python-version: '3.11'
+        cache: 'pip' # caching pip dependencies
+    - run: |
+        pip instal -r requirements.txt
+        playwright install chromium
+    
+    
+
+    - name: Run browser
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  
+      run: python ./run.py
+      
+    - name: Upload output as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: report-output
+        path: 
+          - report/result/*
+          - report/videos_result/*

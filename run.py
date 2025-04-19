@@ -15,6 +15,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
 api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("No se encontró GEMINI_API_KEY en las variables de entorno")
 
 # Initialize the model
 llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash', api_key=SecretStr(api_key))
