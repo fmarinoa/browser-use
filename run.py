@@ -81,6 +81,7 @@ async def main():
     except Exception as e:
         print(f"Error during execution: {e}")
     finally:
+        await context.close()
         await browser.close()  # Ensure browser is properly closed
 
 
