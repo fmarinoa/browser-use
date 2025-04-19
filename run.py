@@ -16,14 +16,14 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 # Initialize the model
-llm = ChatGoogleGenerativeAI(model='gemini-1.5-flash', api_key=SecretStr(api_key))
+llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash', api_key=SecretStr(api_key))
 
 
 # Create agent with the model
 browser = Browser(
     config=BrowserConfig(
-        headless=False,
-        disable_security=False,
+        headless=True,
+        disable_security=True,
 #        chrome_instance_path="/usr/bin/google-chrome",
 #        chrome_instance_path="/usr/bin/brave-browser",  
     )
@@ -43,28 +43,12 @@ context = BrowserContext(
 
 agent = Agent(
     task = """
-Actúa como un QA automatizado y realiza pruebas de regresión (sanity check) en la página **riobuenoshop.com**. Sigue este flujo:
-
-1. **Flujo de Compra**:  
-   - Agrega un producto seleccionando tallas disponibles(si es necesario).  
-   - Accede al carrito
-
-2. **Checkout**:  
-   - Completa el formulario con **data de prueba** (campos obligatorios):  
-     - Asegurate de llenar los campos del formulario
-       - ejemplo:  Nombre, Apellidos, Whatsapp, DNI, dirección, teléfono, email válido, Tipo de entrega, Distrito, .  
-     - Rellena TODOS los campos
-   - Usa el método de pago **"Contra Entrega"**.  
-   - finaliza la Compra (Obligatorio)
-      - Valida que:  
-      - La orden se genere correctamente (pantalla de confirmación + email ).  
-
-
-3. **Reporte**:  
-   - Genera un resumen en español con:  
-     - Pasos ejecutados.  
-     - Errores encontrados (si aplica).  
-     - Evidencia de éxito (ej: "Orden #123 creada correctamente").  
+Genera una tabla comparativa en formato JSON con los 5 mejores precios del iPhone 16 en Lima, Perú, 
+considerando las siguientes especificaciones:
+- Precios en soles peruanos (PEN)
+- Tienda
+- Especificar capacidad (128GB, 256GB, etc.) y color cuando esté disponible
+- Incluir precios con y sin descuentos (si aplica)
 """,
     llm=llm,
     use_vision=True,              # Enable vision capabilities
@@ -75,14 +59,29 @@ Actúa como un QA automatizado y realiza pruebas de regresión (sanity check) en
 
 async def main():
     try:
-        ruta='./report/result/report.json'
+        ruta = './report/result/report.json'
         history = await agent.run()
         history.save_to_file(ruta)
         generate_reporte(ruta)
+
+        if history.has_errors():
+            print("Execution completed with errors")
+            return 1  # Indica error
+        
+        print("Execution completed successfully")
+        return 0  # Indica éxito
+
     except Exception as e:
         print(f"Error during execution: {e}")
+        return 1  # Indica error
+
     finally:
         await browser.close()  # Ensure browser is properly closed
 
 if __name__ == '__main__':
-	asyncio.run(main())
+    try:
+        exit_code = asyncio.run(main())
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        exit_code = 1
+    sys.exit(exit_code)
