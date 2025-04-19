@@ -32,10 +32,14 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  
       run: python ./run.py
       
-    - name: Upload output as artifact
+    - name: Upload results
       uses: actions/upload-artifact@v4
       with:
-        name: report-output
-        path: 
-          - report/result/*
-          - report/videos_result/*
+        name: report-results
+        path: report/result/*
+
+    - name: Upload videos
+      uses: actions/upload-artifact@v4
+      with:
+        name: report-videos
+        path: report/videos_result/*
