@@ -26,8 +26,8 @@ browser = Browser(
     config=BrowserConfig(
         headless=True,
         disable_security=True,
-#        chrome_instance_path="/usr/bin/google-chrome",
-#        chrome_instance_path="/usr/bin/brave-browser",  
+        # chrome_instance_path="/usr/bin/google-chrome",
+        # chrome_instance_path="/usr/bin/brave-browser",
     )
 )
 
@@ -43,15 +43,17 @@ context = BrowserContext(
     )
 )
 
-
-prompt = """
+optional_prompt = """
 Genera una tabla comparativa en formato JSON con los 5 mejores precios del iPhone 16 en Lima, Perú, 
 considerando las siguientes especificaciones:
 - Precios en soles peruanos (PEN)
 - Tienda
 - Especificar capacidad (128GB, 256GB, etc.) y color cuando esté disponible
 - Incluir precios con y sin descuentos (si aplica)
+Todo incluyendo el detalle de los resultados debe estar en español
 """
+
+prompt = os.getenv("PROMPT", optional_prompt)
 
 
 async def main():
@@ -72,7 +74,7 @@ async def main():
         if history.has_errors():
             print("Execution completed with errors")
             return 1  # Indica error
-        
+
         print("Execution completed successfully")
         return 0  # Indica éxito
 
