@@ -1,6 +1,11 @@
 name: Run Browser-use
 
 on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Prompt para el test'
+        required: false
   push:
     branches:
       - main
