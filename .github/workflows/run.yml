@@ -16,7 +16,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, '[run-test]')"
+    # if: "contains(github.event.head_commit.message, '[run-test]')"
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
