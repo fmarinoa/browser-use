@@ -6,12 +6,12 @@ on:
       prompt:
         description: 'Prompt para el test'
         required: false
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
 
 jobs:
   run:
@@ -26,7 +26,9 @@ jobs:
       with:
         python-version: '3.11'
         cache: 'pip' # caching pip dependencies
-    - run: |
+    
+    - name: Instalar dependencias
+      run: |
         pip install -r requirements.txt
         playwright install chromium
     
